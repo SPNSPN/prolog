@@ -1,0 +1,68 @@
+mmember(Elm, [Elm | _]).
+mmember(Elm, [_ | Tail]) :- mmember(Elm, Tail).
+
+conc([], L, L).
+conc([Head | Tleft], Lright, [Head | Tconc])
+	:- conc(Tleft, Lright, Tconc).
+
+last(Item, [Item]).
+last(Item, [_ | Tail]) :- last(Item, Tail).
+
+member_c(Elm, List) :- conc(_, [Elm | _], List).
+
+last_c(Elm, List) :- conc(_, [Elm], List).
+
+push(Elm, Tail, [Elm | Tail]).
+pop([_ | Tail], Tail).
+
+del(Elm, [Elm | Tail], Tail).
+del(Elm, [Elm1 | Tail], [Elm1 | Deleted]) :- del(Elm, Tail, Deleted).
+
+insert(Elm, L, Inserted) :- del(Elm, Inserted, L).
+
+member_d(Elm, L) :- del(Elm, L, _).
+
+sublist(Sub, List) :- conc(Sub, _, List).
+sublist(Sub, [_ | Tail]) :- sublist(Sub, Tail).
+
+permutation([], []).
+permutation(L, [H | T]) :- del(H, L, L1), permutation(T, L1).
+
+evenlength([]).
+oddlength([_ | T]) :- evenlength(T).
+evenlength([_ | T]) :- oddlength(T).
+
+mreverse([], []).
+mreverse([H | T], Rev) :- mreverse(T, Trev), conc(Trev, [H], Rev).
+
+palindrome(List) :- mreverse(List, List).
+
+lrotate([H | T], Rot) :- conc(T, [H], Rot).
+
+means(0, zero).
+means(1, one).
+means(2, two).
+means(3, three).
+means(4, foul).
+means(5, five).
+means(6, six).
+means(7, seven).
+means(8, eight).
+means(9, nine).
+translate([], []).
+translate([Arabic | Atail], [Call | Ctail]) :- means(Arabic, Call)
+										  , translate(Atail, Ctail).
+
+msubset(_, []).
+msubset(L, [H | T]) :- mmember(H, L), del(H, L, D), msubset(D, T).
+
+dividelist([], [], []).
+dividelist([Item], [Item], []).
+dividelist([H1, H2 | T], [H1 | T1], [H2 | T2]) :- dividelist(T, T1, T2).
+
+
+mflatten([], []).
+mflatten([[HH | HT] | T], FL) :- mflatten([HH | HT], FH), mflatten(T, FT), conc(FH, FT, FL).
+mflatten([[] | T], FT) :- mflatten(T, FT).
+mflatten([H | T], [H | FT]) :- mflatten(T, FT).
+

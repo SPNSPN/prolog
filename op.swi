@@ -1,0 +1,15 @@
+:- op(600, xfx, [in]).
+in(Elm, List) :- member(Elm, List).
+
+
+:- op(600, xfy, [and]).
+and(_, _).
+:- op(700, xfx, [gives]).
+gives(_, _).
+:- op(800, fx, [concatenating]).
+concatenating(gives(and(L1, L2), Lconc)) :- conc(L1, L2, Lconc).
+
+:- op(600, xfx, [from]).
+from(_, _).
+:- op(800, fx, [deleting]).
+deleting(gives(from(Elm, List), Del)) :- del(Elm, List, Del).

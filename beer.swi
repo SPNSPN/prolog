@@ -1,0 +1,35 @@
+beer(0, [First, Second, _, Four]) :- 
+	format(First, ["No more", bottles])
+	, format(Second, ["no more", bottles]), nl
+	, format('Go to the store and buy some more, ')
+	, format(Four, [99, bottles]), nl, nl.
+
+beer(1, [First, Second, Third, Four]) :-
+	format(First, [1, bottle])
+	, format(Second, [1, bottle]), nl
+	, format(Third)
+	, format(Four, ["no more", bottles]), nl, nl
+	, beer(0, [First, Second, Third, Four]).
+
+beer(2, [First, Second, Third, Four]) :-
+	format(First, [2, bottles])
+	, format(Second, [2, bottles]), nl
+	, format(Third)
+	, format(Four, [1, bottle]), nl, nl
+	, beer(1, [First, Second, Third, Four]).
+
+beer(N, [First, Second, Third, Four]) :-
+	N > 2
+	, Dec is N - 1
+	, format(First, [N, bottles])
+	, format(Second, [N, bottles]), nl
+	, format(Third)
+	, format(Four, [Dec, bottles]), nl, nl
+	, beer(Dec, [First, Second, Third, Four]).
+
+beer(N) :-
+	N > 0
+	, beer(N, ['~a ~a of beer on the wall, '
+			, '~a ~a of beer.'
+			, 'Take one down and pass it around, '
+			, '~a ~a of beer on the wall.']).

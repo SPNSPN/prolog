@@ -1,0 +1,39 @@
+:- reconsult("util.swi").
+
+vecadd([], [], []).
+vecadd([A | Var], [B | Vbr], [Add | Vaddr]) :- Add is A + B, vecadd(Var, Vbr, Vaddr).
+
+matadd([], [], []).
+matadd([Va | Mar], [Vb | Mbr], [Vadd | Maddr]) :- vecadd(Va, Vb, Vadd), matadd(Mar, Mbr, Maddr).
+
+vecdot([], [], 0).
+vecdot([A | Var], [B | Vbr], Dot) :- Dot is Dotr + A * B, vecdot(Var, Vbr, Dotr).
+
+matjoin([], [], []).
+matjoin([Va | Mar], [], [Va | Mar]).
+matjoin([], [Vb | Mbr], [Vb | Mbr]).
+matjoin([Va | Mar], [Vb | Mbr], [Vj | Mjr]) :- append(Va, Vb, Vj), matjoin(Mar, Mbr, Mjr).
+
+tvec([], []).
+tvec([E | R], [[E] | Tvecr]) :- tvec(R, Tvecr).
+
+tmat([], []).
+tmat([V | Rest], Tmat) :- tvec(V, Vt), tmat(Rest, Tmatr), matjoin(Vt, Tmatr, Tmat).
+
+count_switch(L, L, 0, _) :- !.
+count_switch(La, Lb, N, Seeked) :- split(Ea, La, Laa, Lab), split(Eb, Lab, Laba, Labb), append([Laa, [Eb], Laba, [Ea | Labb]], Lai), not(member(Lai, Seeked)), count_switch(Lai, Lb, N1, [Lai | Seeked]), N is N1 + 1.
+count_switch(La, Lb, N) :- count_switch(La, Lb, N, []).
+
+sgnperm(Base, Perm, Sgn) :- count_switch(Base, Perm, N), if(even(N), Sgn = 1, Sgn = -1), !.
+
+deti(M, Rang, Sig, Deti) :- sgnperm(Rang, Sig, Sgn), findall(E, progn([member(Idx, Rang), nth0(Idx, Sig, Sigi), nth0_in([Sigi, Idx], M, E)]), DetiL), prod_list(DetiL, Detiab), Deti is Detiab * Sgn.
+
+det(M, Det) :- length(M, N), range(N, Rang), findall(Deti, progn([permutation(Rang, Sig), deti(M, Rang, Sig, Deti)]), DetL), sum_list(DetL, Det).
+
+submat(M, [Lx, Ly], [Ux, Uy], SubM) :- findall(SubV, progn([between(Ly, Uy, Y), nth0(Y, M, Vec), findall(E, progn([between(Lx, Ux, X), nth0(X, Vec, E)]), SubV)]), SubM).  
+
+comat(M, [X, Y], CoM) :- [L1 | _] = M, length(L1, Ux), length(M, Uy), range(Ux, Rx), range(Uy, Ry), delete(Rx, X, CRx), delete(Ry, Y, CRy), findall(CoV, progn([member(Yi, CRy), nth0(Yi, M, Vec), findall(CoE, progn([member(Xi, CRx), nth0(Xi, Vec, CoE)]), CoV)]), CoM).
+
+codet(M, [X, Y], CoDet) :- XY is X + Y, if(even(XY), Sgn = 1, Sgn = -1), comat(M, [X, Y], CoMat), det(CoMat, Detab), CoDet is Detab * Sgn.
+
+inv(M, Inv) :- det(M, Det), not(Det =:= 0), length(M, Size), Size1 is Size - 1, findall(InvL, progn([between(0, Size1, Y), findall(InvE, progn([between(0, Size1, X), codet(M, [Y, X], CoDet), InvE is CoDet / Det]), InvL)]), Inv).

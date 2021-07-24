@@ -1,0 +1,2 @@
+The robot     tried to   pour wine out             of the   bottle.
+The robot  ,   tried ,to,   pour wine out     ,        of ,,the,   bottle.

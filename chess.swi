@@ -1,0 +1,36 @@
+solution(N, S) :- N1 is N + 1, range(1, N1, Lx), range(1, N1, Ly)
+				  , Nsum1 is N + N + 1, range(1, Nsum1, Lu)
+				  , Nminus is -1 * N, range(Nminus, N, Lv)
+				  , sol(Lx, Ly, Lu, Lv, S).
+
+sol([], _, _, _, []).
+sol([Xnew | Xrest], Ly, Lu, Lv, [Xnew/Ynew | Qother])
+	:- mmember(Ynew, Ly)
+	   , Unew is Xnew + Ynew
+	   , Vnew is Xnew - Ynew
+	   , del(Ynew, Ly, Yrest)
+	   , del(Unew, Lu, Urest)
+	   , del(Vnew, Lv, Vrest)
+	   , sol(Xrest, Yrest, Urest, Vrest, Qother).
+
+
+range(N, N, []).
+range(N, M, [N | Range]) :- M > N, N1 is N + 1, range(N1, M, Range).
+
+
+knightpath([X/Y]) :- jump(2/1, X/Y); jump(7/1, X/Y).
+knightpath([X/Y, Xo/Yo | T]) :- knightpath([Xo/Yo | T])
+								, jump(Xo/Yo, X/Y).
+
+jump_i(X/Y, JX/JY) :- 2 is X - JX, 1 is Y - JY.
+jump_i(X/Y, JX/JY) :- 2 is JX - X, 1 is Y - JY.
+jump_i(X/Y, JX/JY) :- 2 is X - JX, 1 is JY - Y.
+jump_i(X/Y, JX/JY) :- 2 is JX - X, 1 is JY - Y.
+jump_i(X/Y, JX/JY) :- 1 is X - JX, 2 is Y - JY.
+jump_i(X/Y, JX/JY) :- 1 is JX - X, 2 is Y - JY.
+jump_i(X/Y, JX/JY) :- 1 is X - JX, 2 is JY - Y.
+jump_i(X/Y, JX/JY) :- 1 is JX - X, 2 is JY - Y.
+jump(X/Y, JX/JY) :- range(1, 9, Board)
+					, mmember(JX, Board), mmember(JY, Board)
+					, jump_i(X/Y, JX/JY).
+

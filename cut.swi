@@ -1,0 +1,16 @@
+numsplit([], [], []).
+numsplit([H | T], [H | Prest], Nrest) :- H >= 0, numsplit(T, Prest, Nrest).
+numsplit([H | T], Prest, [H | Nrest]) :- H < 0, numsplit(T, Prest, Nrest).
+
+numsplit_c([], [], []).
+numsplit_c([H | T], Prest, [H | Nrest]) :- H < 0, numsplit_c(T, Prest, Nrest), !.
+numsplit_c([H | T], [H | Prest], Nrest) :- numsplit_c(T, Prest, Nrest).
+
+diffset([], _, []).
+diffset([H | T], L, D) :- member(H, L), diffset(T, L, D), !. 
+diffset([H | T], L, [H | D]) :- diffset(T, L, D). 
+
+unifable([], _, []).
+unifable([H | T], Term, Uni) :- not(H = Term), unifable(T, Term, Uni), !.
+unifable([H | T], Term, [H | Uni]) :- unifable(T, H, Uni).
+

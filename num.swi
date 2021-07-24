@@ -1,0 +1,30 @@
+max(X, Y, X) :- X >= Y.
+max(X, Y, Y) :- X < Y.
+
+maxlist([Max], Max).
+maxlist([H1, H2 | T], Max) :- H1 >= H2, maxlist([H1 | T], Max).
+maxlist([H1, H2 | T], Max) :- H1 < H2, maxlist([H2 | T], Max).
+
+sumlist([], 0).
+sumlist([H | T], Sum) :- sumlist(T, Subsum), Sum is Subsum + H.
+
+ordered([]).
+ordered([_]).
+ordered([H1, H2 | T]) :- H1 =< H2, ordered([H2 | T]).
+
+subsum(Set, Sum, Subset) :- msubset(Set, Subset), sumlist(Subset, Sum).
+
+between(N1, N2, N1) :- N1 =< N2.
+between(N1, N2, B) :- N1 < N2 - 1, NN1 is N1 + 1, between(NN1, N2, B).
+
+:- op(1200, fx, [if]).
+if(then(>(V1, V2), else(set(Var, Var), _))) :- V1 > V2.
+if(then(>(V1, V2), else(_, set(Var, Var)))) :- V1 =< V2.
+if(then(>(V1, V2), set(Var, Var))) :- V1 > V2.
+:- op(1000, xfx, [then]).
+then(_, _).
+:- op(900, xfx, [else]).
+else(_, _).
+:- op(800, xfx, [set]).
+set(_, _).
+

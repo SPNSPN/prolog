@@ -1,0 +1,15 @@
+father_of(bob, dany).
+mother_of(emi, dany).
+
+father_of(john, bob).
+mother_of(lily, bob).
+
+father_of(dan, emi).
+mother_of(rei, emi).
+
+parents_of(X, Y) :- father_of(X, Y).
+parents_of(X, Y) :- mother_of(X, Y).
+
+grandfather_of(X, Y) :- father_of(X, Z), parents_of(Z, Y).
+grandmother_of(X, Y) :- mother_of(X, Z), parents_of(Z, Y).
+

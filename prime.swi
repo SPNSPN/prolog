@@ -1,0 +1,18 @@
+is_prime(_, []).
+is_prime(N, [P | Rest]) :- M is N mod P, M \== 0, is_prime(N, Rest).
+
+next_prime([P | Rest], Next) :- I is P + 1
+								, next_prime_i([P | Rest], I, Next).
+next_prime_i(Primes, I, Next) :- is_prime(I, Primes) 
+								 -> Next = [I | Primes] ; I1 is I + 1
+								 , next_prime_i(Primes, I1, Next).
+
+prime(Ordered) :- prime_i([2], Ordered).
+prime_i([P | Rest], Ordered) :- Ordered > 0, write(P), nl
+					   , next_prime([P | Rest], Next)
+					   , Ordered1 is Ordered - 1
+					   , prime_i(Next, Ordered1).
+prime_i([P | Rest], Ordered) :- Ordered < 0, write(P), nl, sleep(1)
+					   , next_prime([P | Rest], Next)
+					   , prime_i(Next, Ordered).
+										 

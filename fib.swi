@@ -1,0 +1,3 @@
+fib(0, 1).
+fib(1, 1).
+fib(N, Ans) :- N > 1, Dec is N - 1, DDec is N - 2, fib(Dec, Prev), fib(DDec, PPrev), Ans is Prev + PPrev.

@@ -1,0 +1,2 @@
+fact(0, 1).
+fact(N, Ans) :- N > 0, Dec is N - 1, fact(Dec, Prev), Ans is Prev * N.

@@ -1,0 +1,34 @@
+simplify(A, A) :- atomic(A).
+simplify(H + N, E) :- integer(N), simplify_n(H, N, E), !.
+simplify(H + A, E) :- simplify_a(H, A, E).
+
+simplify_n(H + N1, N2, E) :- integer(N1), N is N1 + N2, simplify_n(H, N, E), !.
+simplify_n(H + A, N, E) :- simplify_n(H, N, E1), plushead(A, E1, E), !.
+simplify_n(N1, N2, N) :- integer(N1), N is N1 + N2, !.
+simplify_n(A, N, A + N).
+
+simplify_a(H + N, A, E) :- integer(N), simplify_n(H, N, E1), plushead(A, E1, E), !.
+simplify_a(H + A1, A2, E) :- simplify(H, E1), plushead(A2, E1, E2), plushead(A1, E2, E), !.
+simplify_a(N, A, A + N) :- integer(N), !.
+simplify_a(A1, A2, A1 + A2).
+
+plushead(A1, H + A2, E + A2) :- plushead(A1, H, E), !.
+plushead(A1, A2, A1 + A2).
+
+addtail(Item, [H | T]) :- nonvar(H), addtail(Item, T), !.
+addtail(Item, [Item | _]).
+
+member_taillist(Item, [H | _]) :- nonvar(H), Item = H, !.
+member_taillist(Item, [H | T]) :- nonvar(H), member_taillist(Item, T).
+
+mground(Var) :- var(Var), !, fail.
+mground(A) :- atomic(A), !.
+mground([H | T]) :- !, mground(H), mground(T).
+mground(Term) :- !, Term =.. [_ | Args], mground(Args).
+
+substitute(Term, Term, After, After).
+substitute(_, Term, _, Term) :- atomic(Term), !.
+substitute(Before, [H | T], After, [Hafter | Tafter]) :- !, substitute(Before, H, After, Hafter), substitute(Before, T, After, Tafter).
+substitute(Before, Term, After, E) :- Term =.. [Fun | Args], substitute(Before, Args, After, E1), E =.. [Fun | E1].
+
+

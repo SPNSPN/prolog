@@ -1,0 +1,36 @@
+agari(Tlist, Mentsu) :- agari_j(Tlist, Mentsu).
+agari(Tlist, Mentsu) :- agari_chitoi(Tlist, Mentsu).
+agari(Tlist, Mentsu) :- agari_kokushi(Tlist, Mentsu).
+
+agari_j([], []).
+agari_j(Tlist, [janto(J, J) | Mentsu]) :- insert(Rest1, J, Tlist1, Tlist), insert(Rest2, J, Tlist2, Tlist1), agari_jk(Tlist2, Mentsu).
+
+agari_jk([], []).
+agari_jk(Tlist, [kotsu(K, K, K) | Mentsu]) :- insert(Rest1, K, Tlist1, Tlist), insert(Rest2, K, Tlist2, Tlist1), insert(Rest3, K, Rest4, Tlist2), append4(Rest1, Rest2, Rest3, Rest4, Tlist3), agari_jk(Tlist3, Mentsu).
+agari_jk(Tlist, Mentsu) :- agari_jks(Tlist, Mentsu).
+
+agari_jks([], []).
+agari_jks(Tlist, [shuntsu(T1, T2, T3) | Mentsu]) :- insert(Rest1, T1, Tlist1, Tlist), insert(Rest2, T2, Tlist2, Tlist1), insert(Rest3, T3, Rest4, Tlist3), append4(Rest1, Rest2, Rest3, Rest4, Tlist3), shuntsu(T1, T2, T3),agari_jks(Tlist3, Mentsu).
+
+fu([], tsumo(T), _, [o, o, i, i]).
+fu([], ron(T), menzen, [o, o, o]) :- !.
+fu([], ron(T), _, [o, o]).
+fu([M | Mrest], [Fu | Furest]).
+
+janto(T, T) :- tile(C, N) = T.
+kokushi(T, T, T) :- tile(C, N) = T.
+
+shuntsu(tile(C, N1), tile(C, N2), tile(C, N3)) :- isnumtile(tile(C, N1)), incl(N1, N2), incl(N2, N3).
+
+isnumtile(tile(man, _)).
+isnumtile(tile(pin, _)).
+isnumtile(tile(sou, _)).
+
+ischartile(tile(wind, _)).
+ischartile(tile(sangen, _)).
+
+incl(L, [i | L]).
+
+append4(L1, L2, L3, L4, L) :- append(L3, L4, Tmp1), append(L2, Tmp1, Tmp2), append(L1, Tmp2, L).
+insert(L1, E, L2, L) :- append(L1, [E | L2], L).
+

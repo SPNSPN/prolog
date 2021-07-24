@@ -1,0 +1,7 @@
+hanoi(1, From, To, _) :- format('Move ~a to ~a.', [From, To]), nl.
+hanoi(N, From, To, Void) :- N > 1, Dec is N - 1
+							, hanoi(Dec, From, Void, To)
+							, format('Move ~a to ~a.', [From, To]), nl
+							, hanoi(Dec, Void, To, From).
+
+

@@ -1,0 +1,1 @@
+move(Before, op(FX/FY, TX/TY), After) :- nth()

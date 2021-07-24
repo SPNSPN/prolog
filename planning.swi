@@ -1,0 +1,20 @@
+move(From, To) :- member(From, [station, plant(a), plant(b), port(a), port(b)]), member(To, [station, plant(a), plant(b), port(a), port(b)]), not(From = To).
+
+
+do(state(agv(E, L, plant(P)), [P | A], B), pick(P), state(agv(E, [P | L], plant(P)), A, B)) :- length(L, N), N < 3.
+do(state(agv(E, L, plant(P)), A, [P | B]), pick(P), state(agv(E, [P | L], plant(P)), A, B)) :- length(L, N), N < 3.
+
+do(state(agv(E, [P | L], port(P)), A, B), place(P), state(agv(E, L, port(P)), A, B)).
+
+do(state(agv(E, L, Pa), A, B), move(Pa, Pb), state(agv(E, L, Pb), A, B)) :- move(Pa, Pb).
+
+do(state(agv(E, L, station), A, B), charge, state(agv([e, e, e | E], L, station), A, B)).
+
+ct(a, state(AGV, A, B), state(AGV, [a | A], B)) :- length(A, N), N < 5.
+ct(b, state(AGV, A, B), state(AGV, A, [b | B])) :- length(B, N), N < 5.
+en(state(agv([e | E], L, P), A, B), state(agv(E, L, P), A, B)).
+
+step(State, Next, [Plan1, Plan2, Plan3, Plan4, Plan5, Plan6]) :- en(State, S1), ct(a, S1, S2), ct(b, S2, S3), do(S3, Plan1, S4), do(S4, Plan2, S5), do(S5, Plan3, S6), do(S6, Plan4, S7), do(S7, Plan5, S8), do(S8, Plan6, Next).
+
+planning(S, S, [], 0) :- !.
+planning(Begin, End, Plans, N) :- N1 is N - 1, step(Begin, Next, PlansA), planning(Next, End, PlansB, N1), append(PlansA, PlansB, Plans).

@@ -1,0 +1,20 @@
+move(hanoi([Head | From], To, Another), hanoi(From, [Head | To], Another)) :- validhanoi(Head, To).
+move(hanoi([Head | From], Another, To), hanoi(From, Another, [Head | To])) :- validhanoi(Head, To).
+move(hanoi(To, [Head | From], Another), hanoi([Head | To], From, Another)) :- validhanoi(Head, To).
+move(hanoi(Another, [Head | From], To), hanoi(Another, From, [Head | To])) :- validhanoi(Head, To).
+move(hanoi(To, Another, [Head | From]), hanoi([Head | To], Another, From)) :- validhanoi(Head, To).
+move(hanoi(Another, To, [Head | From]), hanoi(Another, [Head | To], From)) :- validhanoi(Head, To).
+
+validhanoi(_, []).
+validhanoi(H1, [H2 | _]) :- H1 < H2.
+
+search(Curr, Curr, Searched, [Curr | Searched]).
+search(Curr, Goal, Searched, Route) :- move(Curr, Next), not(member(Next, Searched)), search(Next, Goal, [Curr | Searched], Route).
+search(Initial, Goal, Route) :- search(Initial, Goal, [], Route).
+
+writelist([]).
+writelist([H | T]) :- write(H), nl, writelist(T).
+
+writelistback([]).
+writelistback([H | T]) :- writelistback(T), write(H), nl.
+

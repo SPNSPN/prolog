@@ -1,0 +1,33 @@
+findterm_i(_, end_of_file) :- !, seen, fail.
+findterm_i(Term, Read) :- not(Term = Read), !, findterm_i(Term). 
+findterm_i(_, Read) :- write([Read]), nl. 
+findterm_i(Term) :- read(Read)
+					, findterm_i(Term, Read).
+findterm(Term, F) :- see(F), findterm_i(Term).
+
+findallterms_i(Term) :- findterm_i(Term), findallterms_i(Term).
+findallterms(Term, F) :- see(F), findallterms_i(Term).
+
+
+squeeze :- get0(C)
+		, check_eof(C)
+		, dochar(C, normal, Next)
+		, dorest(Next).
+check_eof(C) :- not(C = -1). % code -1 means end_of_file
+
+dochar(46, _, period) :- ! % code 46 means '.'
+						, put(46)
+						, fail.
+dochar(44, _, comma) :- ! % code 44 means ','
+				   , put(44)
+				   , put(32).
+dochar(32, _, skip) :- !. % code 32 means ' '
+dochar(C, skip, normal) :- !, put(32), put(C).
+dochar(C, _, normal) :- put(C).
+
+dorest(normal) :- !, squeeze.
+dorest(Current) :- !, get(C)
+				, check_eof(C)
+				, dochar(C, Current, Next)
+				, dorest(Next).
+

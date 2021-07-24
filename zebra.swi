@@ -1,0 +1,72 @@
+position(1).
+position(2).
+position(3).
+position(4).
+position(5).
+
+color(red).
+color(green).
+color(white).
+color(yellow).
+color(blue).
+
+race(english).
+race(spanish).
+race(ukrainian).
+race(norwegian).
+race(japanese).
+
+pet(dog).
+pet(snail).
+pet(fox).
+pet(horse).
+pet(zebra).
+
+drink(coffee).
+drink(tea).
+drink(milk).
+drink(orange).
+drink(water).
+
+tobacco(oldgold).
+tobacco(cruise).
+tobacco(chesterfield).
+tobacco(luckystrike).
+tobacco(parliament).
+
+
+locate(X, Pos) :- relate(X, Pos), position(Pos).
+
+
+order(white, green).
+
+order(L, R) :- locate(L, Lpos), locate(R, Rpos)
+			   , Diff is Rpos - Lpos, Diff == 1.
+
+
+side(chesterfield, fox).
+side(cruise, horse).
+side(norwegian, blue).
+
+side(X, Y) :- order(X, Y).
+side(X, Y) :- order(Y, X).
+side(X, Y) :- associate(X, XA), associate(Y, YA), order(XA, YA).
+side(X, Y) :- associate(X, XA), associate(Y, YA), order(YA, XA).
+
+
+relate(spanish, dog).
+relate(green, coffee).
+relate(ukrainian, tea).
+relate(oldgold, snail).
+relate(yellow, cruise).
+relate(3, milk).
+relate(norwegian, 1).
+relate(luckystrike, orange).
+relate(japanese, parliament).
+
+
+associate(X, Y) :- relate(X, Y).
+associate(X, Y) :- relate(Y, X).
+associate(X, Y) :- relate(X, Z), relate(Z, Y).
+
+

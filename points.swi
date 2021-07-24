@@ -1,0 +1,4 @@
+point(X, Y) :- member(X, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), member(Y, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).
+
+vertical(point(X, _), point(X, _)).
+horizontal(point(_, Y), point(_, Y)).

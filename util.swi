@@ -1,0 +1,33 @@
+if(Pred, Then, _) :- Pred, !, Then.
+if(_, _, Else) :- Else.
+
+for(From, To, From) :- From =< To.
+for(From, To, I) :- From < To, Next is From + 1, for(Next, To, I).
+
+range(N, N, []) :- !.
+range(Low, High, [Low | Lr]) :- L1 is Low + 1, range(L1, High, Lr).
+range(N, Rang) :- range(0, N, Rang).
+
+even(0) :- !.
+even(N) :- N < 0, !, abs(N, N1), even(N1).
+even(N) :- N1 is N - 1, odd(N1).
+
+odd(0) :- !, fail.
+odd(1) :- !.
+odd(N) :- N < 0, !, abs(N, N1), odd(N1).
+odd(N) :- N1 is N - 1, even(N1).
+
+insert(E, L, Lin) :- append(La, Lb, L), append(La, [E | Lb], Lin).
+split(E, L, La, Lb) :- append(La, [E | Lb], L).
+
+sum_list([], 0).
+sum_list([N | Nr], Sum) :- sum_list(Nr, Sumr), Sum is Sumr + N.
+
+prod_list([], 1).
+prod_list([N | Nr], Prod) :- prod_list(Nr, Prodr), Prod is Prodr * N.
+
+progn([]).
+progn([Head | Rest]) :- Head, progn(Rest).
+
+nth0_in([], E, E).
+nth0_in([Idx | Rest], V, E) :- nth0(Idx, V, Vi), nth0_in(Rest, Vi, E).

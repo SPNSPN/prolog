@@ -1,0 +1,22 @@
+move(state(middle, onbox, middle, nothas)
+		, grasp
+		, state(middle, onbox, middle, has)).
+move(state(From, onfloor, B, nothas)
+		, walk(From, To)
+		, state(To, onfloor, B, nothas)).
+move(state(Pos, onfloor, Pos, nothas)
+		, ride
+		, state(Pos, onbox, Pos, nothas)).
+move(state(Pos, onbox, Pos, nothas)
+		, leave
+		, state(Pos, onfloor, Pos, nothas)).
+move(state(From, onfloor, From, nothas)
+		, push(From, To)
+		, state(To, onfloor, To, nothas)).
+
+search(state(_, _, _, has), [], _).
+search(Current, [Act | Route], Searched) :- move(Current, Act, Next)
+				   , not(member(Next, Searched))
+				   , search(Next, Route, [Current | Searched]).
+search(Initial, Route) :- search(Initial, Route, []).
+
