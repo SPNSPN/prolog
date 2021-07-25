@@ -43,6 +43,7 @@ lambda_i([test(X, Y), Z| Rest], [X, Y, Z| Rest]).
 	test(recur) :- Z = [s, [s, k, [s, [], ]], []]
 :- end_tests(lambda).
 
+
 /*
 tr(Z) = tr(lf. (lx. f (ly. x x y)) (lx. f (ly. x x y)))
       = s tr(lf. lx. f (ly. x x y)) tr(lf. lx. f (ly. x x y))
