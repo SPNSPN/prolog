@@ -1,0 +1,68 @@
+comb_i([i, X| Rest], [X| Rest]).
+comb_i([k, X| Rest], [k(X)| Rest]).
+comb_i([k(X)| Rest], [k(X1)| Rest]) :- comb_i(X, X1).
+comb_i([k(X), _| Rest], [X| Rest]).
+comb_i([s, X| Rest], [s(X)| Rest]).
+comb_i([s(X)| Rest], [s(X1)| Rest]) :- comb_i(X, X1).
+comb_i([s(X), Y| Rest], [s(X, Y)| Rest]).
+comb_i([s(X, Y)| Rest], [s(X, Y1)| Rest]) :- comb_i(Y, Y1).
+comb_i([s(X, Y), Z| Rest], [X, Z, [Y, Z]| Rest]).
+comb_i([[H| R]| Rest], [H| L]) :- append(R, Rest, L).
+
+comb([H| Rest], E) :- comb_i(H, H1), !, comb([H1| Rest], E).
+comb(Rest, E) :- comb_i(Rest, Rest1), !, comb(Rest1, E).
+comb(E, E).
+
+
+lambda_i([tru, X| Rest], [tru(X), Rest]).
+lambda_i([tru(X), _| Rest], [X| Rest]).
+
+lambda_i([fls, X| Rest], [fls(X), Rest]).
+lambda_i([fls(_), Y| Rest], [Y| Rest]).
+
+lambda_i([test, X| Rest], [test(X)| Rest]).
+lambda_i([test(X), Y| Rest], [test(X, Y)| Rest]).
+lambda_i([test(X, Y), Z| Rest], [X, Y, Z| Rest]).
+
+:- begin_tests(lambda).
+	test(void) :- comb([], []).
+	test(i) :- comb([i, a], [a]).
+	test(k) :- comb([k, a, b], [a]).
+	test(s) :- comb([s, a, b, c], [a, c, [b, c]]).
+	test(rev) :- Rev = [[s, [k, [s, i]], k]], comb([Rev, s, i], [s]).
+	test(not_t) :- T = k, F = [s, k], Not = [s, [s, i, [k, F]], [k, T]], comb([Not, T], [E]), comb([F], [E]).
+	test(not_t) :- T = k, F = [s, k], Not = [s, [s, i, [k, F]], [k, T]], comb([Not, F], [T]).
+	test(or_f) :- T = k, F = [s, k], Or = [s, i, [k, T]], comb([Or, F, F], [E]), comb([F], [E]).
+	test(or_t1) :- T = k, F = [s, k], Or = [s, i, [k, T]], comb([Or, T, F], [T]).
+	test(or_t2) :- T = k, F = [s, k], Or = [s, i, [k, T]], comb([Or, F, T], [T]).
+	test(or_t3) :- T = k, F = [s, k], Or = [s, i, [k, T]], comb([Or, T, T], [T]).
+	test(and_f1) :- T = k, F = [s, k], And = [s, s, [k, [k, F]]], comb([And, F, F], [E]), comb([F], [E]).
+	test(and_f2) :- T = k, F = [s, k], And = [s, s, [k, [k, F]]], comb([And, F, T], [E]), comb([F], [E]).
+	test(and_f3) :- T = k, F = [s, k], And = [s, s, [k, [k, F]]], comb([And, T, F], [E]), comb([F], [E]).
+	test(and_t) :- T = k, F = [s, k], And = [s, s, [k, [k, F]]], comb([And, T, T], [T]).
+	test(recur) :- Z = [s, [s, k, [s, [], ]], []]
+:- end_tests(lambda).
+
+/*
+tr(Z) = tr(lf. (lx. f (ly. x x y)) (lx. f (ly. x x y)))
+      = s tr(lf. lx. f (ly. x x y)) tr(lf. lx. f (ly. x x y))
+tr(lf. lx. f (ly. x x y)) = tr(lf. tr(lx. f (ly. x x y)))
+tr(lx. f (ly. x x y)) = s tr(lx. f) tr(lx. ly. x x y)
+					  = s k tr(f) tr(lx. ly. x x y)
+tr(lx. ly. x x y) = tr(lx. tr(ly. x x y))
+tr(ly. x x y) = s tr(ly. x x) tr(ly. y)
+              = s k tr(x x) i
+tr(lx. ly. x x y) = tr(lx. s k tr(x x) i)
+                  = s tr(lx. s k tr(x x)) tr(lx. i)
+				  = s (s tr(lx. s k) tr(lx. tr(x x))) (k i)
+				  = s (s (k (s k)) tr(lx. tr(x) tr(x))) (k i)
+tr(lx. tr(x) tr(x)) = s tr(lx. x) tr(lx. x)
+					= s i i
+
+tr(lx. ly. x x y) = s (s (k (s k)) (s i i)) (k i)
+tr(lx. f (ly. x x y)) = s k tr(f) (s (s (k (s k)) (s i i)) (k i))
+tr(lf. lx. f (ly. x x y)) = tr(lf. (s k tr(f) (s (s (k (s k)) (s i i)) (k i))))
+						  = s tr(lf. s k tr(f)) (k (s (s (k (s k)) (s i i)) (k i)))
+						  = s (s (k (s k)) i) (k (s (s (k (s k)) (s i i)) (k i)))
+tr(Z) = s (s (s (k (s k)) i) (k (s (s (k (s k)) (s i i)) (k i)))) (s (s (k (s k)) i) (k (s (s (k (s k)) (s i i)) (k i))))
+*/
