@@ -1,0 +1,23 @@
+beval(if(Pred, Then, _), ThenE) :- beval(Pred, true), beval(Then, ThenE), !.
+beval(if(Pred, _, Else), ElseE) :- beval(Pred, false), beval(Else, ElseE), !.
+beval(succ(Term), succ(NV)) :- beval(Term, NV), !.
+beval(pred(Term), zero) :- beval(Term, zero), !.
+beval(pred(Term), NV) :- beval(Term, succ(NV)), !.
+beval(iszero(Term), true) :- beval(Term, zero), !.
+beval(iszero(Term), false) :- beval(Term, succ(_)), !.
+beval(V, V).
+
+
+:- begin_tests(beval).
+	test(zero) :- beval(zero, zero).
+	test(succ_z) :- beval(succ(zero), succ(zero)).
+	test(pred_z) :- beval(pred(zero), zero).
+	test(pred_ps) :- beval(pred(succ(zero)), zero).
+	test(pred_sp) :- beval(succ(pred(zero)), succ(zero)).
+	test(pred_sppsssps) :- beval(succ(pred(pred(succ(succ(succ(pred(succ(zero)))))))), succ(succ(zero))).
+	test(iszero_t) :- beval(iszero(pred(succ(zero))), true).
+	test(iszero_f) :- beval(iszero(pred(succ(succ(zero)))), false).
+	test(if_then) :- beval(if(iszero(zero), pred(succ(zero)), two), zero).
+	test(if_else) :- beval(if(iszero(pred(succ(succ(zero)))), one, succ(iszero(succ(zero)))), succ(false)).
+	test(if_pred) :- beval(pred(if(if(iszero(succ(zero)), zero, iszero(zero)), succ(if(false, zero, succ(zero))), zero)), succ(zero)).
+:- end_tests(beval).
